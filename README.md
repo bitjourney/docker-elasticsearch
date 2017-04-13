@@ -34,9 +34,5 @@ docker pull bitjourney/elasticsearch-ci
 ### Publish to Docker Hub
 
 ```sh
-docker login
-VER=0.1
-TAG=bitjourney/elasticsearch-ci:$VER
-docker build -t $TAG
-docker push $TAG
+make publish
 ```
