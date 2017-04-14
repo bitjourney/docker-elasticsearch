@@ -26,5 +26,5 @@ jobs:
           environment:
             IMAGETAG: bitjourney/elasticsearch-ci:test
           command: |
-            docker build -t $IMAGETAG ../image/
+            docker build -t $IMAGETAG image/
             docker run $IMAGETAG
