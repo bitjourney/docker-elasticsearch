@@ -46,7 +46,20 @@ jobs:
             HEALTH_CHECK_RETRY_DELAY: 3
             HEALTH_CHECK_PORT: 9200
           command: |
-            # 'appropriate/curl' is a docker image with just curl https://hub.docker.com/r/appropriate/curl/
+            # As the official doc says, in Remote Docker:
+            #
+            #  > "It’s impossible to start a service in remote docker and ping it directly
+            #  > from a primary container (and vice versa)"
+            #  > https://circleci.com/docs/2.0/building-docker-images/#accessing-services
+            #
+            # Therefore, the health check can be achieved as follows:
+            #
+            #   1. Start a new container from 'appropriate/curl' which is a docker image with just 'curl' commnad
+            #      - https://hub.docker.com/r/appropriate/curl/
+            #
+            #   2. Link the container with the ES container which is running in the background with '--network' option
+            #
+            #   3. Now you can exec 'curl' from the container to the ES container
             docker run --network container:$CONTAINER_NAME \
               appropriate/curl --retry $HEALTH_CHECK_RETRY_LIMIT \
                                --retry-delay $HEALTH_CHECK_RETRY_DELAY \
