@@ -1,0 +1,30 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: buildpack-deps:jessie
+
+    working_directory: /src/bitjourney/docker-elasticsearch-ci
+
+    steps:
+      - checkout
+
+      - setup_remote_docker
+
+      - run:
+          name: Install Docker client
+          environment:
+            DOCKER_VERSION: "17.03.0-ce"
+          command: |
+            set -x
+            curl -L -o /tmp/docker-$DOCKER_VERSION.tgz https://get.docker.com/builds/Linux/x86_64/docker-$DOCKER_VERSION.tgz
+            tar -xz -C /tmp -f /tmp/docker-$DOCKER_VERSION.tgz
+            mv /tmp/docker/* /usr/bin
+
+      - run:
+          name: Run A Container to check whether it successfully runs on CI
+          environment:
+            IMAGETAG: bitjourney/elasticsearch-ci:test
+          command: |
+            docker build -t $IMAGETAG ../image/
+            docker run $IMAGETAG
