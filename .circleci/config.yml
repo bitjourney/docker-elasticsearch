@@ -27,7 +27,11 @@ jobs:
             IMAGETAG: bitjourney/elasticsearch-ci:test
           command: |
             docker build -t $IMAGETAG image/
-            docker run -d $IMAGETAG
+            # run docker for development use
+            #   https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html#docker-cli-run-dev-mode
+            # here is why to set 'http.host' and 'transport.host'
+            #   https://www.elastic.co/guide/en/elasticsearch/reference/5.3/bootstrap-checks.html#_development_vs_production_mode
+            docker run -d -p 9200:9200 -e "http.host=0.0.0.0" -e "transport.host=127.0.0.1" $IMAGETAG
 
       - run:
           name: Install Health Check Utility
@@ -43,5 +47,5 @@ jobs:
             HEALTH_CHECK_PORT: 9200
           command: |
             for i in $(seq $HEALTH_CHECK_RETRY_LIMIT); do
-              nc -vz localhost $HEALTH_CHECK_PORT || (sleep $HEALTH_CHECK_RETRY_WAIT; false) && break
+              nc -vz 127.0.0.1 $HEALTH_CHECK_PORT || (sleep $HEALTH_CHECK_RETRY_WAIT; false) && break
             done
