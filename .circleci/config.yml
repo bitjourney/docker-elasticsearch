@@ -27,4 +27,21 @@ jobs:
             IMAGETAG: bitjourney/elasticsearch-ci:test
           command: |
             docker build -t $IMAGETAG image/
-            docker run $IMAGETAG
+            docker run -d $IMAGETAG
+
+      - run:
+          name: Install Health Check Utility
+          command: |
+            apt-get update -qq
+            apt-get install -y netcat
+
+      - run:
+          name: Health Check Elasticsearch from primary_container
+          environment:
+            HEALTH_CHECK_RETRY_LIMIT: 20
+            HEALTH_CHECK_RETRY_WAIT: 3
+            HEALTH_CHECK_PORT: 9200
+          command: |
+            for i in $(seq $HEALTH_CHECK_RETRY_LIMIT); do
+              nc -vz localhost $HEALTH_CHECK_PORT || (sleep $HEALTH_CHECK_RETRY_WAIT; false) && break
+            done
