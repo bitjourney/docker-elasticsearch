@@ -1,0 +1,66 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: buildpack-deps:jessie
+
+    working_directory: /src/bitjourney/docker-elasticsearch-ci
+
+    environment:
+      CONTAINER_NAME: es_container
+      IMAGE_TAG: bitjourney/elasticsearch-ci:test
+
+    steps:
+      - checkout
+
+      - setup_remote_docker
+
+      - run:
+          name: Install Docker client
+          environment:
+            DOCKER_VERSION: "17.03.0-ce"
+          command: |
+            curl -L -o /tmp/docker-$DOCKER_VERSION.tgz https://get.docker.com/builds/Linux/x86_64/docker-$DOCKER_VERSION.tgz
+            tar -xz -C /tmp -f /tmp/docker-$DOCKER_VERSION.tgz
+            mv /tmp/docker/* /usr/bin
+
+      - run:
+          name: Build a docker image from Dockerfile
+          command: docker build -t $IMAGE_TAG image/
+
+      - run:
+          name: Run a container from the image
+          command: |
+            # run docker for development use
+            #   https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html#docker-cli-run-dev-mode
+            # here is why to set 'http.host' and 'transport.host' instead of 'network.host'
+            #   https://www.elastic.co/guide/en/elasticsearch/reference/5.3/bootstrap-checks.html#_development_vs_production_mode
+            docker run -d --name $CONTAINER_NAME -p 9200:9200 -e "http.host=0.0.0.0" -e "transport.host=127.0.0.1" $IMAGE_TAG
+
+      - run: docker ps
+
+      - run:
+          name: Health Check if the Elasticsearch container is working
+          environment:
+            HEALTH_CHECK_RETRY_LIMIT: 20
+            HEALTH_CHECK_RETRY_DELAY: 3
+            HEALTH_CHECK_PORT: 9200
+          command: |
+            # As the official doc says, in Remote Docker:
+            #
+            #  > "It’s impossible to start a service in remote docker and ping it directly
+            #  > from a primary container (and vice versa)"
+            #  > https://circleci.com/docs/2.0/building-docker-images/#accessing-services
+            #
+            # Therefore, the health check can be achieved as follows:
+            #
+            #   1. Start a new container from 'appropriate/curl' which is a docker image with just 'curl' commnad
+            #      - https://hub.docker.com/r/appropriate/curl/
+            #
+            #   2. Link the container with the ES container which is running in the background with '--network' option
+            #
+            #   3. Now you can exec 'curl' from the container to the ES container
+            docker run --network container:$CONTAINER_NAME \
+              appropriate/curl --retry $HEALTH_CHECK_RETRY_LIMIT \
+                               --retry-delay $HEALTH_CHECK_RETRY_DELAY \
+                               --retry-connrefused http://localhost:$HEALTH_CHECK_PORT
