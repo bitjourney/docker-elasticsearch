@@ -11,6 +11,14 @@ jobs:
       IMAGE_TAG: bitjourney/elasticsearch-ci:test
 
     steps:
+
+      - add_ssh_keys:
+          fingerprints:
+            # Deploy key with Write Access to GitHub is required for `git push` in deploy section.
+            # Here is how this key was created and configured:
+            #   https://circleci.com/docs/1.0/adding-read-write-deployment-key/
+            - "bc:8f:f1:99:81:45:c1:f9:ed:98:97:00:22:80:f8:c2"
+
       - checkout
 
       - setup_remote_docker
@@ -64,3 +72,26 @@ jobs:
               appropriate/curl --retry $HEALTH_CHECK_RETRY_LIMIT \
                                --retry-delay $HEALTH_CHECK_RETRY_DELAY \
                                --retry-connrefused http://localhost:$HEALTH_CHECK_PORT
+
+      - deploy:
+          name: Publish to Docker Hub
+          environment:
+            BASE_TAG: bitjourney/elasticsearch-ci
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              TIMESTAMP=`date "+%Y%m%d%H%M"`
+              IMAGE_TAG_DEPLOY="$BASE_TAG:$TIMESTAMP"
+              LATEST_TAG="$BASE_TAG:latest"
+
+              docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PASSWORD
+
+              docker build -t $IMAGE_TAG_DEPLOY image/
+              docker push $IMAGE_TAG_DEPLOY
+
+              docker build -t $LATEST_TAG image/
+              docker push $LATEST_TAG
+
+              git tag $TIMESTAMP
+              git push --tags
+            fi
+
