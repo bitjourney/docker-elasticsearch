@@ -16,3 +16,6 @@ xpack.security.enabled: false
 indices.fielddata.cache.size: 40%
 # Checks to see whether the query size is too large before data is loaded
 indices.breaker.fielddata.limit: 50%
+
+# Disable swap memory
+bootstrap.memory_lock: true

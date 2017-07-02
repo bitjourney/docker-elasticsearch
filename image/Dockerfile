@@ -4,6 +4,7 @@
 FROM docker.elastic.co/elasticsearch/elasticsearch:5.1.2
 
 ADD elasticsearch.yml /usr/share/elasticsearch/config/
+ADD limits.conf /etc/security/
 
 USER root
 RUN chown elasticsearch:elasticsearch config/elasticsearch.yml
