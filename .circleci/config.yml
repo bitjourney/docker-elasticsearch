@@ -75,23 +75,8 @@ jobs:
 
       - deploy:
           name: Publish to Docker Hub
-          environment:
-            BASE_TAG: bitjourney/elasticsearch-ci
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              TIMESTAMP=`date "+%Y%m%d%H%M"`
-              IMAGE_TAG_DEPLOY="$BASE_TAG:$TIMESTAMP"
-              LATEST_TAG="$BASE_TAG:latest"
-
-              docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PASSWORD
-
-              docker build -t $IMAGE_TAG_DEPLOY image/
-              docker push $IMAGE_TAG_DEPLOY
-
-              docker build -t $LATEST_TAG image/
-              docker push $LATEST_TAG
-
-              git tag $TIMESTAMP
-              git push --tags
+              make publish
             fi
 
