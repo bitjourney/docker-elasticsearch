@@ -1,18 +1,14 @@
-BASETAG=bitjourney/elasticsearch-ci
-TIMESTAMP=`date "+%Y%m%d%H%M"`
-IMAGETAG=$(BASETAG):$(TIMESTAMP)
-LATESTTAG=$(BASETAG):latest
+BASE_TAG:=bitjourney/elasticsearch-ci
+TIMESTAMP:=`date "+%Y%m%d%H%M"`
+TIMESTAMP_TAG:=$(BASE_TAG):$(TIMESTAMP)
+VERSION_TAG:=$(BASE_TAG):5.3.2
 
-publish: push-to-docker-hub create-git-tag
-
-push-to-docker-hub:
+publish:
 		docker --version
-		docker login	
-		docker build -t $(IMAGETAG) image/
-		docker push $(IMAGETAG)
-		docker build -t $(LATESTTAG) image/
-		docker push $(LATESTTAG)
+		docker build -t $(TIMESTAMP_TAG) image/
+		docker push $(TIMESTAMP_TAG)
+		docker build -t $(VERSION_TAG) image/
+		docker push $(VERSION_TAG)
 
-create-git-tag:
 		git tag $(TIMESTAMP)
 		git push --tags
