@@ -27,7 +27,7 @@ https://hub.docker.com/r/bitjourney/elasticsearch-ci/
 ## Usage
 
 ```sh
-docker pull bitjourney/elasticsearch-ci
+> docker pull bitjourney/elasticsearch-ci
 ```
 
 ## Development
@@ -37,5 +37,6 @@ The docker images are automatically published via Circle CI when merging to `mas
 In order to manually publish a new image, run:
 
 ```sh
-make publish
+> docker login
+> make publish
 ```
