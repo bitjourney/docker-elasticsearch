@@ -5,7 +5,7 @@ DOCKER_TAG=$(BASE_TAG):$(VERSION)-$(TIMESTAMP)
 GIT_TAG=$(VERSION)-$(TIMESTAMP)
 
 check:
-	@echo DOCKER_TAG=$(GIT_TAG)
+	@echo DOCKER_TAG=$(DOCKER_TAG)
 	@echo GIT_TAG=$(GIT_TAG)
 	docker --version
 	docker build -t elasticsearch-ci-test image/
