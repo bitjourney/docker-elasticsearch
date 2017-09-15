@@ -1,14 +1,16 @@
 BASE_TAG:=bitjourney/elasticsearch-ci
 TIMESTAMP:=`date "+%Y%m%d%H%M"`
-VERSION:=`ruby -e 'STDIN.read.match(/FROM.*?(\d+(?:\.\d+)*)/)[1].display' < image/Dockerfile`
+VERSION:=`perl -le 'local $/; print <> =~ /FROM.*?(\d+(?:\.\d+)*)/' < image/Dockerfile`
 DOCKER_TAG=$(BASE_TAG):$(VERSION)-$(TIMESTAMP)
 GIT_TAG=$(VERSION)-$(TIMESTAMP)
+
+TEST_IMAGE_TAG:=test
 
 check:
 	@echo DOCKER_TAG=$(DOCKER_TAG)
 	@echo GIT_TAG=$(GIT_TAG)
 	docker --version
-	docker build -t elasticsearch-ci-test image/
+	docker build -t $(TEST_IMAGE_TAG) image/
 
 publish:
 	docker --version

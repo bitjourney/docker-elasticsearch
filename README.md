@@ -1,5 +1,7 @@
 # docker-elasticsearch-ci
 
+[![CircleCI](https://circleci.com/gh/bitjourney/docker-elasticsearch-ci/tree/master.svg?style=svg)](https://circleci.com/gh/bitjourney/docker-elasticsearch-ci/tree/master)
+
 Docker Image for CI Build.
 
 <!-- TOC -->
