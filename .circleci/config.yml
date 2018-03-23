@@ -50,7 +50,7 @@ jobs:
       - run:
           name: Health Check if the Elasticsearch container is working
           environment:
-            HEALTH_CHECK_RETRY_LIMIT: 20
+            HEALTH_CHECK_RETRY_LIMIT: 40
             HEALTH_CHECK_RETRY_DELAY: 3
             HEALTH_CHECK_PORT: 9200
           command: |
@@ -71,7 +71,7 @@ jobs:
             docker run --network container:$CONTAINER_NAME \
               appropriate/curl --retry $HEALTH_CHECK_RETRY_LIMIT \
                                --retry-delay $HEALTH_CHECK_RETRY_DELAY \
-                               --retry-connrefused http://localhost:$HEALTH_CHECK_PORT
+                               --retry-connrefused http://127.0.0.1:$HEALTH_CHECK_PORT
 
       - deploy:
           name: Publish to Docker Hub
