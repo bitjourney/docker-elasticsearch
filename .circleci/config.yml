@@ -26,15 +26,15 @@ jobs:
       - run:
           name: Install Docker client
           environment:
-            DOCKER_VERSION: "17.05.0-ce"
+            DOCKER_VERSION: "17.09.1-ce"
           command: |
-            curl -L -o /tmp/docker-$DOCKER_VERSION.tgz https://get.docker.com/builds/Linux/x86_64/docker-$DOCKER_VERSION.tgz
+            curl -L -o /tmp/docker-$DOCKER_VERSION.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$DOCKER_VERSION.tgz
             tar -xz -C /tmp -f /tmp/docker-$DOCKER_VERSION.tgz
             mv /tmp/docker/* /usr/bin
 
       - run:
           name: Build a docker image from Dockerfile
-          command: make check
+          command: make check TEST_IMAGE_TAG=$TEST_IMAGE_TAG
 
       - run:
           name: Run a container from the image
@@ -50,7 +50,7 @@ jobs:
       - run:
           name: Health Check if the Elasticsearch container is working
           environment:
-            HEALTH_CHECK_RETRY_LIMIT: 20
+            HEALTH_CHECK_RETRY_LIMIT: 40
             HEALTH_CHECK_RETRY_DELAY: 3
             HEALTH_CHECK_PORT: 9200
           command: |
@@ -71,14 +71,13 @@ jobs:
             docker run --network container:$CONTAINER_NAME \
               appropriate/curl --retry $HEALTH_CHECK_RETRY_LIMIT \
                                --retry-delay $HEALTH_CHECK_RETRY_DELAY \
-                               --retry-connrefused http://localhost:$HEALTH_CHECK_PORT
+                               --retry-connrefused http://127.0.0.1:$HEALTH_CHECK_PORT
 
       - deploy:
           name: Publish to Docker Hub
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PASSWORD
-
               make publish
             fi
 

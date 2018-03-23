@@ -1,18 +1,22 @@
-cluster.name: "docker-ci-cluster"
+cluster.name: "docker-cluster"
 
 # minimum_master_nodes need to be explicitly set when bound on a public IP
 # set to 1 to allow single node clusters
-# because a single node is enough for CI build
 # Details: https://github.com/elastic/elasticsearch/pull/17288
 discovery.zen.minimum_master_nodes: 1
-
-# Disable X-Packs Security
-# because it requires BASE authentication which is redundant for test
-# Details: https://www.elastic.co/guide/en/x-pack/current/security-settings.html#general-security-settings
-xpack.security.enabled: false
 
 # https://www.elastic.co/guide/en/elasticsearch/guide/current/_limiting_memory_usage.html#fielddata-size
 # Place an upper limit to the fielddata cache to avoid OOM
 indices.fielddata.cache.size: 40%
 # Checks to see whether the query size is too large before data is loaded
 indices.breaker.fielddata.limit: 50%
+
+# CORS
+http.port: 9200
+http.cors.allow-origin: "http://localhost:*"
+http.cors.enabled: true
+http.cors.allow-headers : X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization
+http.cors.allow-credentials: true
+
+# logging
+logger.deprecation.level: warn
