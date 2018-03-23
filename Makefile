@@ -1,4 +1,4 @@
-BASE_TAG:=bitjourney/elasticsearch-ci
+BASE_TAG:=bitjourney/elasticsearch
 TIMESTAMP:=`date "+%Y%m%d%H%M"`
 VERSION:=`perl -le 'local $$/; print <> =~ /FROM.*?(\d+(?:\.\d+)*)/' < image/Dockerfile`
 DOCKER_TAG=$(BASE_TAG):$(VERSION)
