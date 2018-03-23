@@ -34,7 +34,7 @@ jobs:
 
       - run:
           name: Build a docker image from Dockerfile
-          command: make check
+          command: make check TEST_IMAGE_TAG=$TEST_IMAGE_TAG
 
       - run:
           name: Run a container from the image
