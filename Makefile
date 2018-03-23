@@ -4,13 +4,14 @@ VERSION:=`perl -le 'local $$/; print <> =~ /FROM.*?(\d+(?:\.\d+)*)/' < image/Doc
 DOCKER_TAG=$(BASE_TAG):$(VERSION)
 GIT_TAG=$(VERSION)-$(TIMESTAMP)
 
-TEST_IMAGE_TAG:=test
+TEST_IMAGE_TAG:=elasticsearch-docker-test
 
 check:
 	@echo DOCKER_TAG=$(DOCKER_TAG)
 	@echo GIT_TAG=$(GIT_TAG)
 	docker --version
 	docker build -t $(TEST_IMAGE_TAG) image/
+	docker run -t $(TEST_IMAGE_TAG) elasticsearch --version
 
 publish:
 	docker --version
