@@ -26,9 +26,9 @@ jobs:
       - run:
           name: Install Docker client
           environment:
-            DOCKER_VERSION: "17.05.0-ce"
+            DOCKER_VERSION: "17.09.1-ce"
           command: |
-            curl -L -o /tmp/docker-$DOCKER_VERSION.tgz https://get.docker.com/builds/Linux/x86_64/docker-$DOCKER_VERSION.tgz
+            curl -L -o /tmp/docker-$DOCKER_VERSION.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$DOCKER_VERSION.tgz
             tar -xz -C /tmp -f /tmp/docker-$DOCKER_VERSION.tgz
             mv /tmp/docker/* /usr/bin
 
@@ -78,7 +78,6 @@ jobs:
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PASSWORD
-
               make publish
             fi
 
