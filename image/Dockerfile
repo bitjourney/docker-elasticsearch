@@ -2,7 +2,9 @@
 
 # The version must be fixed to the latest of the Amazon Elasticsearch Service
 # https://aws.amazon.com/elasticsearch-service/faqs/
-FROM docker.elastic.co/elasticsearch/elasticsearch:6.2.3
+#
+# Available docker images are here: https://www.docker.elastic.co/
+FROM docker.elastic.co/elasticsearch/elasticsearch:6.2.4
 
 ADD elasticsearch.yml /usr/share/elasticsearch/config/
 
