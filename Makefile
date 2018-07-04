@@ -1,10 +1,12 @@
 BASE_TAG:=bitjourney/elasticsearch
-TIMESTAMP:=`date "+%Y%m%d%H%M"`
-VERSION:=`perl -le 'local $$/; print <> =~ /FROM.*?(\d+(?:\.\d+)*)/' < image/Dockerfile`
+TIMESTAMP:=$(shell date "+%Y%m%d%H%M")
+VERSION:=$(shell perl -le 'local $$/; print <> =~ /FROM.*?(\d+(?:\.\d+)*)/' < image/Dockerfile)
 DOCKER_TAG=$(BASE_TAG):$(VERSION)
 GIT_TAG=$(VERSION)-$(TIMESTAMP)
 
 TEST_IMAGE_TAG:=elasticsearch-docker-test
+
+export VERSION
 
 check:
 	@echo DOCKER_TAG=$(DOCKER_TAG)
