@@ -4,7 +4,7 @@
 # https://aws.amazon.com/elasticsearch-service/faqs/
 #
 # Available docker images are here: https://www.docker.elastic.co/
-FROM docker.elastic.co/elasticsearch/elasticsearch:6.2.4
+FROM docker.elastic.co/elasticsearch/elasticsearch:6.7.2
 
 ADD elasticsearch.yml /usr/share/elasticsearch/config/
 
