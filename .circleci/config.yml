@@ -17,7 +17,7 @@ jobs:
             # Deploy key with Write Access to GitHub is required for `git push` in deploy section.
             # Here is how this key was created and configured:
             #   https://circleci.com/docs/1.0/adding-read-write-deployment-key/
-            - "bc:8f:f1:99:81:45:c1:f9:ed:98:97:00:22:80:f8:c2"
+            - "f8:ad:35:3a:c7:62:02:7f:20:bb:b5:11:93:53:7e:7e"
 
       - checkout
 
